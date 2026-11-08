@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Awtrix 像素燈控制中樞</title>
+  <title>Awtrix 像素燈控制中樞 Pro</title>
   <style>
     :root {
       --bg: #0b0f19;
       --card-bg: #182235;
+      --card-sub: #111a2c;
       --primary: #38bdf8;
+      --primary-hover: #0284c7;
       --accent: #f43f5e;
+      --warning: #f59e0b;
+      --success: #22c55e;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --border: #2e3e5c;
@@ -19,7 +23,7 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 24px 16px;
+      padding: 20px 12px;
       display: flex;
       justify-content: center;
     }
@@ -28,7 +32,7 @@
       max-width: 540px;
       background: var(--card-bg);
       border-radius: 20px;
-      padding: 24px;
+      padding: 22px;
       box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
       border: 1px solid var(--border);
     }
@@ -36,36 +40,61 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
     h1 {
-      font-size: 20px;
+      font-size: 19px;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .badge-online {
       font-size: 12px;
       background: rgba(34, 197, 94, 0.2);
       color: #4ade80;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 20px;
       border: 1px solid #22c55e;
+    }
+    .btn-return-time {
+      background: #334155;
+      color: #38bdf8;
+      border: 1px solid #475569;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-return-time:hover {
+      background: #475569;
+      color: #fff;
     }
     .section-title {
       font-size: 15px;
       font-weight: 600;
       color: var(--primary);
-      margin: 20px 0 12px;
+      margin: 22px 0 12px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .form-group {
+    .card {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 14px;
+    }
+    .form-group {
+      margin-bottom: 12px;
     }
     label {
       display: block;
@@ -74,14 +103,14 @@
       color: var(--text-muted);
       margin-bottom: 6px;
     }
-    textarea, input[type="text"], input[type="number"], select {
+    textarea, input[type="text"], input[type="number"], input[type="date"], select {
       width: 100%;
       box-sizing: border-box;
       background: #0b0f19;
       border: 1px solid var(--border);
       color: #fff;
-      border-radius: 10px;
-      padding: 10px 12px;
+      border-radius: 8px;
+      padding: 9px 12px;
       font-size: 14px;
       outline: none;
       transition: border 0.2s;
@@ -91,7 +120,7 @@
     }
     textarea {
       resize: vertical;
-      min-height: 70px;
+      min-height: 60px;
     }
     .row {
       display: flex;
@@ -100,30 +129,18 @@
     .row .form-group {
       flex: 1;
     }
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 14px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .checkbox-group input {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
-    }
     button.btn-primary {
       width: 100%;
       background: var(--primary);
       color: #0b0f19;
       border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 15px;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: filter 0.2s;
+      margin-top: 4px;
     }
     button.btn-primary:hover {
       filter: brightness(1.1);
@@ -138,7 +155,7 @@
       background: #25334d;
       color: #cbd5e1;
       padding: 4px 10px;
-      border-radius: 16px;
+      border-radius: 14px;
       font-size: 12px;
       cursor: pointer;
       user-select: none;
@@ -147,54 +164,8 @@
       background: var(--primary);
       color: #0b0f19;
     }
-
-    /* 應用開關卡片 */
-    .app-card {
-      background: #111a2c;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .app-info {
-      flex: 1;
-    }
-    .app-name {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .app-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .switch-btn {
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-    }
-    .btn-test {
-      background: #334155;
-      color: #e2e8f0;
-      margin-right: 6px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-test:hover {
-      background: #475569;
-    }
     .msg {
-      margin-top: 14px;
+      margin-top: 10px;
       padding: 10px;
       border-radius: 8px;
       font-size: 13px;
@@ -211,150 +182,333 @@
       color: #f87171;
       border: 1px solid #ef4444;
     }
+    .app-card {
+      background: #111a2c;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .app-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .btn-test {
+      background: #334155;
+      color: #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-test:hover {
+      background: #475569;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>⏰ Awtrix 像素燈控制中樞</h1>
-      <span class="badge-online">192.168.6.221 連線中</span>
+      <div>
+        <h1>⏰ Awtrix 像素燈控制中樞</h1>
+        <span class="badge-online">192.168.6.221 連線中</span>
+      </div>
+      <!-- 立即切換回時間 -->
+      <button class="btn-return-time" onclick="switchToTime()">🕒 切換回時間</button>
     </header>
 
-    <!-- 1. 自訂即時跑馬燈 -->
-    <div class="section-title">💬 自訂即時跑馬燈</div>
-    <div class="form-group">
-      <textarea id="text" placeholder="輸入想在時鐘上顯示的文字..."></textarea>
-      <div class="preset-chips">
-        <span class="chip" onclick="setPreset('記得吃藥 💊')">記得吃藥</span>
-        <span class="chip" onclick="setPreset('出門記得帶鑰匙 🔑')">帶鑰匙</span>
-        <span class="chip" onclick="setPreset('出門記得關冷氣 ❄️')">關冷氣</span>
-        <span class="chip" onclick="setPreset('Welcome to Lune\'s Home! ❤️')">歡迎回家</span>
-        <span class="chip" onclick="setPreset('今天是個美好的一天！☀️')">早安美好</span>
+    <!-- 1. 中文自動翻英文跑馬燈 -->
+    <div class="section-title">💬 中文自動翻譯跑馬燈 (英文播出)</div>
+    <div class="card">
+      <div class="form-group">
+        <label>輸入中文訊息（將自動翻譯為英文推送到像素燈）</label>
+        <textarea id="zhText" placeholder="例如：記得吃藥、出門記得鎖門、祝你有美好的一天..."></textarea>
+        <div class="preset-chips">
+          <span class="chip" onclick="setPreset('記得吃藥')">記得吃藥</span>
+          <span class="chip" onclick="setPreset('出門記得帶鑰匙')">帶鑰匙</span>
+          <span class="chip" onclick="setPreset('記得關冷氣')">關冷氣</span>
+          <span class="chip" onclick="setPreset('歡迎回家！')">歡迎回家</span>
+          <span class="chip" onclick="setPreset('早安，今天也要加油！')">早安</span>
+        </div>
       </div>
+      <div class="row">
+        <div class="form-group">
+          <label>字體顏色</label>
+          <select id="colorSelect">
+            <option value="rainbow">🌈 彩虹漸層</option>
+            <option value="white">⚪ 簡約白</option>
+            <option value="cyan">🔵 科技青</option>
+            <option value="yellow">🟡 暖暖黃</option>
+            <option value="red">🔴 警示紅</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>重複次數</label>
+          <input type="number" id="repeat" value="2" min="1" max="10">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="sendTranslatedMarquee()">🌐 自動翻譯並發送到像素燈</button>
+      <div id="statusMarquee" class="msg"></div>
     </div>
 
-    <div class="row">
-      <div class="form-group">
-        <label>字體顏色</label>
-        <select id="colorSelect">
-          <option value="rainbow">🌈 彩虹漸層</option>
-          <option value="white">⚪ 簡約白</option>
-          <option value="cyan">🔵 科技青</option>
-          <option value="yellow">🟡 暖暖黃</option>
-          <option value="red">🔴 警示紅</option>
-        </select>
+    <!-- 2. 倒數計時器 -->
+    <div class="section-title">⏳ 節日 / 重要考試倒數計時器</div>
+    <div class="card">
+      <div class="row">
+        <div class="form-group">
+          <label>目標名稱 (中文可，自動轉英文)</label>
+          <input type="text" id="countdownName" placeholder="例如：過年、學測、暑假" value="New Year">
+        </div>
+        <div class="form-group">
+          <label>目標日期</label>
+          <input type="date" id="countdownDate">
+        </div>
       </div>
-      <div class="form-group">
-        <label>重複次數</label>
-        <input type="number" id="repeat" value="2" min="1" max="10">
-      </div>
-      <div class="form-group">
-        <label>停留秒數</label>
-        <input type="number" id="duration" value="15" min="5" max="60">
-      </div>
+      <button class="btn-primary" onclick="sendCountdown()">🚀 計算天數並推送到時鐘</button>
+      <div id="statusCountdown" class="msg"></div>
     </div>
 
-    <button class="btn-primary" onclick="sendMarquee()">🚀 即時發送到像素鐘</button>
-    <div id="status" class="msg"></div>
+    <!-- 3. 即時匯率 / 加密貨幣 / 財經看板 -->
+    <div class="section-title">📈 即時匯率 & 財經行情看板</div>
+    <div class="card">
+      <div class="row">
+        <div class="form-group">
+          <label>選擇行情項目</label>
+          <select id="marketItem">
+            <option value="USD_TWD">💵 美元匯率 (USD / TWD)</option>
+            <option value="JPY_TWD">💴 日圓匯率 (JPY / TWD)</option>
+            <option value="BTC">🪙 比特幣 (BTC / USDT)</option>
+            <option value="ETH">💎 以太坊 (ETH / USDT)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="sendMarketTicker()">📊 抓取最新行情並推送到時鐘</button>
+      <div id="statusMarket" class="msg"></div>
+    </div>
 
-    <!-- 2. 社群熱門酷炫自動化應用 -->
-    <div class="section-title">🌟 社群熱門自動化應用</div>
+    <!-- 4. YouTube 訂閱數看板 -->
+    <div class="section-title">▶️ YouTube 頻道訂閱數看板</div>
+    <div class="card">
+      <div class="form-group">
+        <label>YouTube 頻道名稱或自訂訂閱數</label>
+        <div class="row">
+          <input type="text" id="ytChannel" placeholder="例如：Lune Channel" value="My Channel">
+          <input type="number" id="ytSubs" placeholder="訂閱數" value="1280">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="sendYTTicker()">📺 推送 YouTube 訂閱看板</button>
+      <div id="statusYT" class="msg"></div>
+    </div>
 
-    <!-- 應用 1: 氣象局 -->
+    <!-- 5. 系統自動化快速試播 (全英文) -->
+    <div class="section-title">🔔 系統自動化應用試播 (全英文標準)</div>
     <div class="app-card">
-      <div class="app-info">
+      <div>
         <div class="app-name">⛅ 中央氣象局每日早報</div>
-        <div class="app-desc">每天早上 07:00 自動推播澎湖馬公天氣預報</div>
+        <div class="app-desc">Makung: Partly Cloudy, 26C, Humidity 78%</div>
       </div>
-      <div>
-        <button class="btn-test" onclick="testNotification('馬公天氣: 晴時多雲，降雨機率0%，溫度24-28度', 'weather', true)">即時試播</button>
-      </div>
+      <button class="btn-test" onclick="sendAwtrixRaw('Makung: Partly Cloudy, 26C, Humidity 78%', 'weather', true)">試播</button>
     </div>
-
-    <!-- 應用 2: 洗衣提醒 -->
     <div class="app-card">
-      <div class="app-info">
+      <div>
         <div class="app-name">🧺 洗衣完成通知</div>
-        <div class="app-desc">洗衣機洗完時，像素燈自動亮起曬衣提醒</div>
+        <div class="app-desc">Laundry Finished! Remember to hang clothes!</div>
       </div>
-      <div>
-        <button class="btn-test" onclick="testNotification('衣服洗好囉！記得去曬衣 🧺', '540', true)">即時試播</button>
-      </div>
+      <button class="btn-test" onclick="sendAwtrixRaw('Laundry Finished! Remember to hang clothes!', '540', true)">試播</button>
     </div>
-
-    <!-- 應用 3: 車庫未關提醒 -->
     <div class="app-card">
-      <div class="app-info">
+      <div>
         <div class="app-name">⚠️ 晚間車庫未關提醒</div>
-        <div class="app-desc">每晚 22:30 檢查車庫捲門，若未關閉顯示紅字警告</div>
+        <div class="app-desc">WARNING: Garage door is still OPEN!</div>
       </div>
-      <div>
-        <button class="btn-test" onclick="testNotification('警告：車庫捲門尚未關閉！⚠️', null, false, [255, 0, 0])">即時試播</button>
-      </div>
+      <button class="btn-test" onclick="sendAwtrixRaw('WARNING: Garage door is still OPEN!', null, false, [255, 0, 0])">試播</button>
     </div>
-
-    <!-- 應用 4: 電池低電量提醒 -->
     <div class="app-card">
-      <div class="app-info">
-        <div class="app-name">🪫 設備低電量警報</div>
-        <div class="app-desc">大門電子鎖或開關電量低於 25% 時提醒換電池</div>
-      </div>
       <div>
-        <button class="btn-test" onclick="testNotification('大門電子鎖電量偏低，請記得充電！🪫', null, false, [255, 140, 0])">即時試播</button>
+        <div class="app-name">🪫 設備低電量警報</div>
+        <div class="app-desc">Door Lock Battery LOW, please recharge!</div>
       </div>
+      <button class="btn-test" onclick="sendAwtrixRaw('Door Lock Battery LOW, please recharge!', null, false, [255, 140, 0])">試播</button>
     </div>
 
   </div>
 
   <script>
+    // 預設日期為 2027 過年或幾個月後
+    const nextYear = new Date().getFullYear() + 1;
+    document.getElementById('countdownDate').value = `${nextYear}-01-01`;
+
     function setPreset(txt) {
-      document.getElementById('text').value = txt;
+      document.getElementById('zhText').value = txt;
     }
 
-    async function sendMarquee() {
-      const text = document.getElementById('text').value.trim();
-      const statusEl = document.getElementById('status');
-      if (!text) {
-        statusEl.className = 'msg error';
-        statusEl.innerText = '請先輸入要顯示的跑馬燈文字！';
-        statusEl.style.display = 'block';
+    // 切換回時間畫面
+    async function switchToTime() {
+      try {
+        await fetch('http://192.168.6.221/api/switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'Time' })
+        });
+        alert('✅ 已切換回時間顯示！');
+      } catch (err) {
+        alert('切換失敗，請確認手機連在家中 Wi-Fi。');
+      }
+    }
+
+    // 1. 中文自動翻譯跑馬燈
+    async function sendTranslatedMarquee() {
+      const zh = document.getElementById('zhText').value.trim();
+      const statusEl = document.getElementById('statusMarquee');
+      if (!zh) {
+        showMsg(statusEl, '請先輸入中文文字！', true);
         return;
       }
 
-      const repeat = parseInt(document.getElementById('repeat').value) || 2;
-      const duration = parseInt(document.getElementById('duration').value) || 15;
-      const colorVal = document.getElementById('colorSelect').value;
+      showMsg(statusEl, '🌐 正在翻譯成英文...', false, '#38bdf8');
 
-      let payload = { text, repeat, duration };
-
-      if (colorVal === 'rainbow') {
-        payload.rainbow = true;
-      } else if (colorVal === 'cyan') {
-        payload.color = [56, 189, 248];
-      } else if (colorVal === 'yellow') {
-        payload.color = [250, 204, 21];
-      } else if (colorVal === 'red') {
-        payload.color = [244, 63, 94];
-      } else {
-        payload.color = [255, 255, 255];
+      let englishText = zh;
+      try {
+        const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(zh)}&langpair=zh-TW|en`);
+        const transData = await transRes.json();
+        if (transData.responseData && transData.responseData.translatedText) {
+          englishText = transData.responseData.translatedText;
+        }
+      } catch (e) {
+        console.warn('翻譯失敗，使用原始字串', e);
       }
 
-      await postAwtrix(payload);
+      const repeat = parseInt(document.getElementById('repeat').value) || 2;
+      const colorVal = document.getElementById('colorSelect').value;
+      let payload = { text: englishText, repeat, duration: 18 };
+
+      if (colorVal === 'rainbow') payload.rainbow = true;
+      else if (colorVal === 'cyan') payload.color = [56, 189, 248];
+      else if (colorVal === 'yellow') payload.color = [250, 204, 21];
+      else if (colorVal === 'red') payload.color = [244, 63, 94];
+      else payload.color = [255, 255, 255];
+
+      await postAwtrix(payload, statusEl, `✅ 翻譯「${englishText}」已推送到時鐘！`);
     }
 
-    async function testNotification(text, icon, rainbow, color) {
+    // 2. 倒數計時器
+    async function sendCountdown() {
+      const name = document.getElementById('countdownName').value.trim() || 'Event';
+      const dateVal = document.getElementById('countdownDate').value;
+      const statusEl = document.getElementById('statusCountdown');
+
+      if (!dateVal) {
+        showMsg(statusEl, '請選擇目標日期！', true);
+        return;
+      }
+
+      const targetDate = new Date(dateVal + 'T00:00:00');
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      const diffTime = targetDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      let msgText = '';
+      if (diffDays > 0) {
+        msgText = `${name}: ${diffDays} days left!`;
+      } else if (diffDays === 0) {
+        msgText = `TODAY is ${name}! 🎉`;
+      } else {
+        msgText = `${name} has passed!`;
+      }
+
+      const payload = {
+        text: msgText,
+        rainbow: true,
+        repeat: 2,
+        duration: 15,
+        icon: 'calendar'
+      };
+
+      await postAwtrix(payload, statusEl, `✅ 倒數推播成功：「${msgText}」`);
+    }
+
+    // 3. 即時匯率 / 加密貨幣行情
+    async function sendMarketTicker() {
+      const item = document.getElementById('marketItem').value;
+      const statusEl = document.getElementById('statusMarket');
+      showMsg(statusEl, '📊 正在抓取最新市場行情...', false, '#38bdf8');
+
+      let text = '';
+      let color = [56, 189, 248];
+
+      try {
+        if (item === 'USD_TWD') {
+          const res = await fetch('https://open.er-api.com/v6/latest/USD');
+          const data = await res.json();
+          const twd = data.rates.TWD.toFixed(2);
+          text = `USD/TWD: $${twd}`;
+        } else if (item === 'JPY_TWD') {
+          const res = await fetch('https://open.er-api.com/v6/latest/JPY');
+          const data = await res.json();
+          const twd = (data.rates.TWD).toFixed(4);
+          text = `JPY/TWD: $${twd}`;
+        } else if (item === 'BTC') {
+          const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+          const data = await res.json();
+          const p = parseFloat(data.price).toLocaleString('en-US', { maximumFractionDigits: 1 });
+          text = `BTC: $${p}`;
+          color = [250, 204, 21];
+        } else if (item === 'ETH') {
+          const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
+          const data = await res.json();
+          const p = parseFloat(data.price).toLocaleString('en-US', { maximumFractionDigits: 1 });
+          text = `ETH: $${p}`;
+          color = [168, 85, 247];
+        }
+
+        const payload = { text, color, repeat: 2, duration: 15 };
+        await postAwtrix(payload, statusEl, `✅ 行情推播成功：「${text}」`);
+      } catch (err) {
+        showMsg(statusEl, '行情抓取失敗，請稍後再試。', true);
+      }
+    }
+
+    // 4. YouTube 訂閱數看板
+    async function sendYTTicker() {
+      const ch = document.getElementById('ytChannel').value.trim() || 'My Channel';
+      const subs = document.getElementById('ytSubs').value.trim() || '1000';
+      const statusEl = document.getElementById('statusYT');
+
+      const text = `${ch}: ${parseInt(subs).toLocaleString()} subs`;
+      const payload = {
+        text,
+        color: [255, 0, 0],
+        icon: 'youtube',
+        repeat: 2,
+        duration: 15
+      };
+
+      await postAwtrix(payload, statusEl, `✅ YouTube 看板推播成功：「${text}」`);
+    }
+
+    // 5. 系統試播
+    async function sendAwtrixRaw(text, icon, rainbow, color) {
       let payload = { text, repeat: 2, duration: 15 };
       if (icon) payload.icon = icon;
       if (rainbow) payload.rainbow = true;
       if (color) payload.color = color;
 
-      await postAwtrix(payload);
+      await postAwtrix(payload, null, null);
+      alert('✅ 已發送試播訊息至像素燈！');
     }
 
-    async function postAwtrix(payload) {
-      const statusEl = document.getElementById('status');
-      statusEl.style.display = 'none';
-
+    async function postAwtrix(payload, statusEl, successMsg) {
       try {
         const res = await fetch('http://192.168.6.221/api/notify', {
           method: 'POST',
@@ -363,17 +517,21 @@
         });
 
         if (res.ok) {
-          statusEl.className = 'msg success';
-          statusEl.innerText = '✅ 發送成功！像素鐘正在播放中';
-          statusEl.style.display = 'block';
+          if (statusEl) showMsg(statusEl, successMsg || '✅ 發送成功！像素燈正在播放', false);
         } else {
           throw new Error('HTTP ' + res.status);
         }
       } catch (err) {
-        statusEl.className = 'msg error';
-        statusEl.innerText = '❌ 發送失敗，請確認你的裝置連在同一個家用 Wi-Fi 下。';
-        statusEl.style.display = 'block';
+        if (statusEl) showMsg(statusEl, '❌ 發送失敗，請確認手機連在家中 Wi-Fi。', true);
       }
+    }
+
+    function showMsg(el, txt, isErr, customColor) {
+      el.style.display = 'block';
+      el.className = isErr ? 'msg error' : 'msg success';
+      if (customColor) el.style.color = customColor;
+      else el.style.color = '';
+      el.innerText = txt;
     }
   </script>
 </body>
