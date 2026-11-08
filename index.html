@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Awtrix 像素燈控制中樞</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #182235;
+      --primary: #38bdf8;
+      --accent: #f43f5e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #2e3e5c;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 540px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-online {
+      font-size: 12px;
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid #22c55e;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 20px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    textarea, input[type="text"], input[type="number"], select {
+      width: 100%;
+      box-sizing: border-box;
+      background: #0b0f19;
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--primary);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row .form-group {
+      flex: 1;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+    button.btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #0b0f19;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    button.btn-primary:hover {
+      filter: brightness(1.1);
+    }
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .chip {
+      background: #25334d;
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip:hover {
+      background: var(--primary);
+      color: #0b0f19;
+    }
+
+    /* 應用開關卡片 */
+    .app-card {
+      background: #111a2c;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-info {
+      flex: 1;
+    }
+    .app-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .app-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .switch-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-test {
+      background: #334155;
+      color: #e2e8f0;
+      margin-right: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-test:hover {
+      background: #475569;
+    }
+    .msg {
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+      text-align: center;
+    }
+    .msg.success {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid #22c55e;
+    }
+    .msg.error {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⏰ Awtrix 像素燈控制中樞</h1>
+      <span class="badge-online">192.168.6.221 連線中</span>
+    </header>
+
+    <!-- 1. 自訂即時跑馬燈 -->
+    <div class="section-title">💬 自訂即時跑馬燈</div>
+    <div class="form-group">
+      <textarea id="text" placeholder="輸入想在時鐘上顯示的文字..."></textarea>
+      <div class="preset-chips">
+        <span class="chip" onclick="setPreset('記得吃藥 💊')">記得吃藥</span>
+        <span class="chip" onclick="setPreset('出門記得帶鑰匙 🔑')">帶鑰匙</span>
+        <span class="chip" onclick="setPreset('出門記得關冷氣 ❄️')">關冷氣</span>
+        <span class="chip" onclick="setPreset('Welcome to Lune\'s Home! ❤️')">歡迎回家</span>
+        <span class="chip" onclick="setPreset('今天是個美好的一天！☀️')">早安美好</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>字體顏色</label>
+        <select id="colorSelect">
+          <option value="rainbow">🌈 彩虹漸層</option>
+          <option value="white">⚪ 簡約白</option>
+          <option value="cyan">🔵 科技青</option>
+          <option value="yellow">🟡 暖暖黃</option>
+          <option value="red">🔴 警示紅</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>重複次數</label>
+        <input type="number" id="repeat" value="2" min="1" max="10">
+      </div>
+      <div class="form-group">
+        <label>停留秒數</label>
+        <input type="number" id="duration" value="15" min="5" max="60">
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="sendMarquee()">🚀 即時發送到像素鐘</button>
+    <div id="status" class="msg"></div>
+
+    <!-- 2. 社群熱門酷炫自動化應用 -->
+    <div class="section-title">🌟 社群熱門自動化應用</div>
+
+    <!-- 應用 1: 氣象局 -->
+    <div class="app-card">
+      <div class="app-info">
+        <div class="app-name">⛅ 中央氣象局每日早報</div>
+        <div class="app-desc">每天早上 07:00 自動推播澎湖馬公天氣預報</div>
+      </div>
+      <div>
+        <button class="btn-test" onclick="testNotification('馬公天氣: 晴時多雲，降雨機率0%，溫度24-28度', 'weather', true)">即時試播</button>
+      </div>
+    </div>
+
+    <!-- 應用 2: 洗衣提醒 -->
+    <div class="app-card">
+      <div class="app-info">
+        <div class="app-name">🧺 洗衣完成通知</div>
+        <div class="app-desc">洗衣機洗完時，像素燈自動亮起曬衣提醒</div>
+      </div>
+      <div>
+        <button class="btn-test" onclick="testNotification('衣服洗好囉！記得去曬衣 🧺', '540', true)">即時試播</button>
+      </div>
+    </div>
+
+    <!-- 應用 3: 車庫未關提醒 -->
+    <div class="app-card">
+      <div class="app-info">
+        <div class="app-name">⚠️ 晚間車庫未關提醒</div>
+        <div class="app-desc">每晚 22:30 檢查車庫捲門，若未關閉顯示紅字警告</div>
+      </div>
+      <div>
+        <button class="btn-test" onclick="testNotification('警告：車庫捲門尚未關閉！⚠️', null, false, [255, 0, 0])">即時試播</button>
+      </div>
+    </div>
+
+    <!-- 應用 4: 電池低電量提醒 -->
+    <div class="app-card">
+      <div class="app-info">
+        <div class="app-name">🪫 設備低電量警報</div>
+        <div class="app-desc">大門電子鎖或開關電量低於 25% 時提醒換電池</div>
+      </div>
+      <div>
+        <button class="btn-test" onclick="testNotification('大門電子鎖電量偏低，請記得充電！🪫', null, false, [255, 140, 0])">即時試播</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setPreset(txt) {
+      document.getElementById('text').value = txt;
+    }
+
+    async function sendMarquee() {
+      const text = document.getElementById('text').value.trim();
+      const statusEl = document.getElementById('status');
+      if (!text) {
+        statusEl.className = 'msg error';
+        statusEl.innerText = '請先輸入要顯示的跑馬燈文字！';
+        statusEl.style.display = 'block';
+        return;
+      }
+
+      const repeat = parseInt(document.getElementById('repeat').value) || 2;
+      const duration = parseInt(document.getElementById('duration').value) || 15;
+      const colorVal = document.getElementById('colorSelect').value;
+
+      let payload = { text, repeat, duration };
+
+      if (colorVal === 'rainbow') {
+        payload.rainbow = true;
+      } else if (colorVal === 'cyan') {
+        payload.color = [56, 189, 248];
+      } else if (colorVal === 'yellow') {
+        payload.color = [250, 204, 21];
+      } else if (colorVal === 'red') {
+        payload.color = [244, 63, 94];
+      } else {
+        payload.color = [255, 255, 255];
+      }
+
+      await postAwtrix(payload);
+    }
+
+    async function testNotification(text, icon, rainbow, color) {
+      let payload = { text, repeat: 2, duration: 15 };
+      if (icon) payload.icon = icon;
+      if (rainbow) payload.rainbow = true;
+      if (color) payload.color = color;
+
+      await postAwtrix(payload);
+    }
+
+    async function postAwtrix(payload) {
+      const statusEl = document.getElementById('status');
+      statusEl.style.display = 'none';
+
+      try {
+        const res = await fetch('http://192.168.6.221/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          statusEl.className = 'msg success';
+          statusEl.innerText = '✅ 發送成功！像素鐘正在播放中';
+          statusEl.style.display = 'block';
+        } else {
+          throw new Error('HTTP ' + res.status);
+        }
+      } catch (err) {
+        statusEl.className = 'msg error';
+        statusEl.innerText = '❌ 發送失敗，請確認你的裝置連在同一個家用 Wi-Fi 下。';
+        statusEl.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
