@@ -40,13 +40,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
     h1 {
       font-size: 19px;
-      margin: 0;
+      margin: 0 0 4px 0;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -58,6 +58,12 @@
       padding: 3px 10px;
       border-radius: 20px;
       border: 1px solid #22c55e;
+      display: inline-block;
+    }
+    .badge-offline {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border-color: #ef4444;
     }
     .btn-return-time {
       background: #334155;
@@ -84,6 +90,7 @@
       margin: 22px 0 12px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
     }
     .card {
@@ -92,6 +99,120 @@
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
+    }
+    /* LED Screen Matrix */
+    .screen-bezel {
+      background: #04060a;
+      border: 2px solid #2e3e5c;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: inset 0 4px 16px rgba(0,0,0,0.9);
+      margin-bottom: 10px;
+    }
+    #ledMatrix {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+    .screen-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .screen-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn-mini {
+      background: #25334d;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-mini:hover {
+      background: #334155;
+      color: #fff;
+    }
+    /* Mode Switcher */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .mode-btn {
+      background: #0b0f19;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover {
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .mode-btn.active {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+    .mode-btn.active-carousel {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: var(--warning);
+      color: #fde68a;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+    .mode-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .mode-sub {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+    /* Slider */
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .speed-badge {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+      height: 6px;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
     .form-group {
       margin-bottom: 12px;
@@ -220,11 +341,67 @@
     <header>
       <div>
         <h1>⏰ Awtrix 像素燈控制中樞</h1>
-        <span class="badge-online">192.168.6.221 連線中</span>
+        <span id="connBadge" class="badge-online">192.168.6.221 連線中</span>
       </div>
-      <!-- 立即切換回時間 -->
-      <button class="btn-return-time" onclick="switchToTime()">🕒 切換回時間</button>
+      <button class="btn-return-time" onclick="setDisplayMode('original')">🕒 恢復原來顯示</button>
     </header>
+
+    <!-- 0. 即時螢幕預覽 (模擬 /screen) -->
+    <div class="section-title" style="margin-top: 0;">
+      <span>📺 像素燈即時畫面預覽</span>
+      <span id="currentAppLabel" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">偵測中...</span>
+    </div>
+    <div class="card">
+      <div class="screen-bezel">
+        <canvas id="ledMatrix" width="640" height="160"></canvas>
+      </div>
+      <div class="screen-toolbar">
+        <span id="screenStatus">🟢 即時同步中 (250ms)</span>
+        <div class="screen-actions">
+          <button id="btnToggleScreen" class="btn-mini" onclick="toggleScreenStream()">⏸️ 暫停預覽</button>
+          <a class="btn-mini" href="http://192.168.6.221/screen" target="_blank" rel="noopener">↗️ 原生畫面</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 0.5 顯示模式 & 滾動速度控制 -->
+    <div class="section-title">🎛️ 顯示模式與滾動速度</div>
+    <div class="card">
+      <label>目前播放模式切換</label>
+      <div class="mode-grid">
+        <button id="btnModeCarousel" class="mode-btn" onclick="setDisplayMode('carousel')">
+          <div class="mode-title">📢 固定輪播模式</div>
+          <div class="mode-sub">輪播指定提醒（段考/看書）</div>
+        </button>
+        <button id="btnModeOriginal" class="mode-btn" onclick="setDisplayMode('original')">
+          <div class="mode-title">🕒 原來的顯示</div>
+          <div class="mode-sub">時鐘・日期・電量系統輪播</div>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>輪播內容選擇（固定輪播模式使用）</label>
+        <select id="carouselPreset">
+          <option value="exam">📚 第二次段考倒數（12月2日）</option>
+          <option value="study">📖 翔和睿記得看書（英文提醒）</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 4px;">
+        <div class="slider-header">
+          <label style="margin: 0;">⚡ 文字滾動速度 (TSPEED)</label>
+          <span id="speedValue" class="speed-badge">400%</span>
+        </div>
+        <input type="range" id="speedSlider" min="50" max="500" step="10" value="400" oninput="onSpeedInput(this.value)" onchange="applyScrollSpeed(this.value)">
+        <div class="slider-labels">
+          <span>50% (慢速)</span>
+          <span>100% (標準)</span>
+          <span>300% (快速)</span>
+          <span>500% (極速)</span>
+        </div>
+      </div>
+      <div id="statusMode" class="msg"></div>
+    </div>
 
     <!-- 1. 中文自動翻英文跑馬燈 -->
     <div class="section-title">💬 中文自動翻譯跑馬燈 (英文播出)</div>
@@ -343,26 +520,249 @@
   </div>
 
   <script>
-    // 預設日期為 2027 過年或幾個月後
+    const AWTRIX_HOST = 'http://192.168.6.221';
+
+    // 預設日期為明年 1/1
     const nextYear = new Date().getFullYear() + 1;
     document.getElementById('countdownDate').value = `${nextYear}-01-01`;
 
-    function setPreset(txt) {
-      document.getElementById('zhText').value = txt;
+    // === 即時 32x8 像素矩陣畫布渲染 ===
+    const canvas = document.getElementById('ledMatrix');
+    const ctx = canvas.getContext('2d');
+    let screenStreaming = true;
+    let screenBusy = false;
+    let screenTimer = null;
+
+    function drawMatrix(pixels) {
+      ctx.fillStyle = '#05070b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const cols = 32;
+      const rows = 8;
+      const cellW = canvas.width / cols;
+      const cellH = canvas.height / rows;
+      const radius = Math.min(cellW, cellH) * 0.36;
+
+      for (let i = 0; i < Math.min(pixels.length, cols * rows); i++) {
+        const c = pixels[i];
+        const x = (i % cols) * cellW + cellW / 2;
+        const y = Math.floor(i / cols) * cellH + cellH / 2;
+
+        if (c === 0) {
+          ctx.fillStyle = '#141923';
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          const r = (c >> 16) & 0xFF;
+          const g = (c >> 8) & 0xFF;
+          const b = c & 0xFF;
+          const colorStr = `rgb(${r},${g},${b})`;
+
+          // 微光暈效果
+          ctx.save();
+          ctx.shadowColor = colorStr;
+          ctx.shadowBlur = 8;
+          ctx.fillStyle = colorStr;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
     }
 
-    // 切換回時間畫面
-    async function switchToTime() {
+    async function pollScreen() {
+      if (!screenStreaming || screenBusy) return;
+      screenBusy = true;
       try {
-        await fetch('http://192.168.6.221/api/switch', {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`${AWTRIX_HOST}/api/screen`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const pixels = await res.json();
+          drawMatrix(pixels);
+          document.getElementById('screenStatus').innerText = '🟢 即時同步中 (250ms)';
+          const badge = document.getElementById('connBadge');
+          badge.innerText = '192.168.6.221 連線中';
+          badge.className = 'badge-online';
+        }
+      } catch (err) {
+        document.getElementById('screenStatus').innerText = '⚠️ 預覽連線中斷（請確認在內網或允許不安全內容）';
+        const badge = document.getElementById('connBadge');
+        badge.innerText = '192.168.6.221 未連線';
+        badge.className = 'badge-online badge-offline';
+      } finally {
+        screenBusy = false;
+      }
+    }
+
+    function toggleScreenStream() {
+      screenStreaming = !screenStreaming;
+      const btn = document.getElementById('btnToggleScreen');
+      if (screenStreaming) {
+        btn.innerText = '⏸️ 暫停預覽';
+        document.getElementById('screenStatus').innerText = '🟢 即時同步中 (250ms)';
+        pollScreen();
+      } else {
+        btn.innerText = '▶️ 繼續預覽';
+        document.getElementById('screenStatus').innerText = '⏸️ 畫面預覽已暫停';
+      }
+    }
+
+    // === 初始化讀取設定與目前狀態 ===
+    async function syncInitialStatus() {
+      try {
+        const [settingsRes, statsRes] = await Promise.all([
+          fetch(`${AWTRIX_HOST}/api/settings`),
+          fetch(`${AWTRIX_HOST}/api/stats`)
+        ]);
+
+        if (settingsRes.ok) {
+          const settings = await settingsRes.json();
+          if (typeof settings.TSPEED === 'number') {
+            document.getElementById('speedSlider').value = settings.TSPEED;
+            document.getElementById('speedValue').innerText = `${settings.TSPEED}%`;
+          }
+          const isOriginal = settings.TIM === true || settings.DAT === true;
+          updateModeButtons(isOriginal ? 'original' : 'carousel');
+        }
+
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          document.getElementById('currentAppLabel').innerText = `目前顯示：${stats.app || '未知'}`;
+        }
+      } catch (e) {
+        console.warn('讀取初始設定失敗:', e);
+      }
+    }
+
+    function updateModeButtons(mode) {
+      const btnCarousel = document.getElementById('btnModeCarousel');
+      const btnOriginal = document.getElementById('btnModeOriginal');
+      btnCarousel.classList.remove('active-carousel');
+      btnOriginal.classList.remove('active');
+      if (mode === 'carousel') {
+        btnCarousel.classList.add('active-carousel');
+      } else {
+        btnOriginal.classList.add('active');
+      }
+    }
+
+    // === 切換播放模式 (輪播 vs 原來的顯示) ===
+    async function setDisplayMode(mode) {
+      const statusEl = document.getElementById('statusMode');
+      try {
+        if (mode === 'carousel') {
+          const preset = document.getElementById('carouselPreset').value;
+          let customPayload = {};
+
+          if (preset === 'exam') {
+            const target = new Date('2026-12-02T00:00:00');
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+            const txt = diff > 0
+              ? `2nd Exam: ${diff} Days Left! Keep Fighting! (Dec 2)`
+              : (diff === 0 ? '2nd Exam Today! Good Luck!' : 'Keep Going!');
+            customPayload = { text: txt, rainbow: true };
+          } else {
+            customPayload = { text: 'Xiang & Rui: Remember to study!', rainbow: true };
+          }
+
+          // 關閉內建時鐘/日期，僅固定輪播自訂提醒
+          await fetch(`${AWTRIX_HOST}/api/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ TIM: false, DAT: false, HUM: false, TEMP: false })
+          });
+
+          await fetch(`${AWTRIX_HOST}/api/custom?name=exam`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(customPayload)
+          });
+
+          await fetch(`${AWTRIX_HOST}/api/switch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'exam' })
+          });
+
+          updateModeButtons('carousel');
+          document.getElementById('currentAppLabel').innerText = '目前顯示：exam';
+          showMsg(statusEl, '✅ 已切換為「固定輪播模式」', false);
+        } else {
+          // 恢復原來顯示：開啟系統時間、日期、電量，並清除 exam 自訂輪播
+          await fetch(`${AWTRIX_HOST}/api/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ TIM: true, DAT: true, BAT: true })
+          });
+
+          await fetch(`${AWTRIX_HOST}/api/custom?name=exam`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+          });
+
+          await fetch(`${AWTRIX_HOST}/api/switch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'Time' })
+          });
+
+          updateModeButtons('original');
+          document.getElementById('currentAppLabel').innerText = '目前顯示：Time';
+          showMsg(statusEl, '✅ 已恢復為「原來的顯示（時鐘／日期／電量）」', false);
+        }
+      } catch (err) {
+        showMsg(statusEl, '❌ 模式切換失敗，請確認連在家中 Wi-Fi。', true);
+      }
+    }
+
+    // === 控制文字滾動速度 ===
+    function onSpeedInput(val) {
+      document.getElementById('speedValue').innerText = `${val}%`;
+    }
+
+    async function applyScrollSpeed(val) {
+      const statusEl = document.getElementById('statusMode');
+      const speed = parseInt(val, 10);
+      try {
+        const res = await fetch(`${AWTRIX_HOST}/api/settings`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: 'Time' })
+          body: JSON.stringify({ TSPEED: speed })
         });
-        alert('✅ 已切換回時間顯示！');
+        if (res.ok) {
+          showMsg(statusEl, `⚡ 滾動速度已調整為 ${speed}%`, false);
+        } else {
+          throw new Error('HTTP ' + res.status);
+        }
       } catch (err) {
-        alert('切換失敗，請確認手機連在家中 Wi-Fi。');
+        showMsg(statusEl, '❌ 速度調整失敗，請確認連在家中 Wi-Fi。', true);
       }
+    }
+
+    // 啟動畫布輪詢與狀態同步
+    drawMatrix(new Array(256).fill(0));
+    syncInitialStatus();
+    pollScreen();
+    screenTimer = setInterval(pollScreen, 250);
+    setInterval(async () => {
+      try {
+        const res = await fetch(`${AWTRIX_HOST}/api/stats`);
+        if (res.ok) {
+          const stats = await res.json();
+          document.getElementById('currentAppLabel').innerText = `目前顯示：${stats.app || '未知'}`;
+        }
+      } catch (e) {}
+    }, 3000);
+
+    function setPreset(txt) {
+      document.getElementById('zhText').value = txt;
     }
 
     // 1. 中文自動翻譯跑馬燈
@@ -510,7 +910,7 @@
 
     async function postAwtrix(payload, statusEl, successMsg) {
       try {
-        const res = await fetch('http://192.168.6.221/api/notify', {
+        const res = await fetch(`${AWTRIX_HOST}/api/notify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
